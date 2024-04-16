@@ -83,20 +83,19 @@ while run:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RIGHT:
                 Cat.x += 5
+                action = 0
+                frame = 0
             if event.key == pygame.K_LEFT:
                 Cat.x -= 5
+                action = 3
+                frame = 0
             if event.key == pygame.K_UP:
                 Cat.y -= 5
+                action = 1
+                frame = 0
             if event.key == pygame.K_DOWN:
                 Cat.y += 5
-
-        #Animation changes on key press
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_DOWN and action > 0:
-                action -= 1
-                frame = 0
-            if event.key == pygame.K_UP and action < len(animation_list) - 1:
-                action += 1
+                action = 2
                 frame = 0
 
     pygame.display.update()
