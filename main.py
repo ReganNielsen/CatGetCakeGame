@@ -11,17 +11,21 @@ SCREEN_HEIGHT = 600
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Cat Get Cake")
 
+
 #Import Background
 bg_image = pygame.image.load('resources/bg.png')
 
-class Cat:
-    x = 100
-    y = 100
 
-#Import image (sprite sheet)
+#Import image (sprite sheet) 
 cat = pygame.image.load('resources/cat.png').convert_alpha()
-cat_obj = pygame.Surface((88, 88))
 sprite_sheet = sprite_sheet.SpriteSheet(cat)
+cat_x = 1
+cat_y = 1
+
+move_right = False
+move_left = False
+move_down = False
+move_up = False
 
 #Color variables
 # BG = (50, 50, 50)
@@ -29,8 +33,8 @@ BLACK = (0, 0, 0)
 
 #Animation list for images
 animation_list = []
-animation_steps = [3, 3, 3, 3]
-action = 0
+animation_steps = [3, 3, 3, 3, 1]
+action = 4
 #Timer -> draw next image to create animation
 last_update = pygame.time.get_ticks()
 animation_cooldown = 250
@@ -46,12 +50,13 @@ for animation in animation_steps:
         step_counter += 1
     animation_list.append(temp_image_list)
 
-#Clock for movement
-clock = pygame.time.Clock()
-
 #Infinite loop
 run = True
 while run:
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
 
     #Update background
     # screen.fill(BG)
@@ -67,38 +72,56 @@ while run:
         if frame >= len(animation_list[action]):
             frame = 0
 
+    #Event Handler
+    for event in pygame.event.get():
+        #Key is pressed down for movement
+        if(event.type == pygame.KEYDOWN):
+            if(event.key == pygame.K_RIGHT):
+                move_right = True
+                action = 0
+                frame = 0
+            if(event.key == pygame.K_LEFT):
+                move_left = True
+                action = 3
+                frame = 0
+            if(event.key == pygame.K_DOWN):
+                move_down = True
+                action = 2
+                frame = 0
+            if(event.key == pygame.K_UP):
+                move_up = True
+                action = 1
+                frame = 0
+        elif(event.type == pygame.KEYUP):
+            if(event.key == pygame.K_RIGHT):
+                move_right = False
+                action = 4
+                frame = 0
+            if(event.key == pygame.K_LEFT):
+                move_left = False
+                action = 4
+                frame = 0
+            if(event.key == pygame.K_DOWN):
+                move_down = False
+                action = 4
+                frame = 0
+            if(event.key == pygame.K_UP):
+                move_up = False
+                action = 4
+                frame = 0
+
+    if(move_right == True):
+        cat_x += 0.09
+    if(move_left == True):
+        cat_x -= 0.09
+    if(move_up == True):
+        cat_y -= 0.09
+    if(move_down == True):
+        cat_y += 0.09
 
     #Display frame image
     #screen.blit(cat_obj, (Cat.x, Cat.y))
-    screen.blit(animation_list[action][frame], (Cat.x, Cat.y))
-
-
-    #Event Handler
-    for event in pygame.event.get():
-        #Quit
-        if event.type == pygame.QUIT:
-            run = False
-
-        #Movement of cat obj box
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_RIGHT:
-                Cat.x += 5
-                action = 0
-                frame = 0
-            if event.key == pygame.K_LEFT:
-                Cat.x -= 5
-                action = 3
-                frame = 0
-            if event.key == pygame.K_UP:
-                Cat.y -= 5
-                action = 1
-                frame = 0
-            if event.key == pygame.K_DOWN:
-                Cat.y += 5
-                action = 2
-                frame = 0
+    screen.blit(animation_list[action][frame], (cat_x, cat_y))
 
     pygame.display.update()
-    clock.tick(60)
-
 pygame.quit()
